@@ -18,8 +18,9 @@ def calculate_cost(layout):
             overlap = calculate_overlap(asset1, asset2)
 
             #if overlap == 0:
-            print i, j, layout_id, asset1[2], asset2[2], overlap
-            print asset1[1], [asset1[0]._dimension['depth'], asset1[0]._dimension['width']], asset2[1], [asset2[0]._dimension['depth'], asset2[0]._dimension['width']] 
+            print layout_id, overlap
+            #print i, j, layout_id, asset1[2], asset2[2], overlap
+            #print asset1[1], [asset1[0]._dimension['depth'], asset1[0]._dimension['width']], asset2[1], [asset2[0]._dimension['depth'], asset2[0]._dimension['width']] 
             
             total_overlap += overlap
 
@@ -46,36 +47,31 @@ def calculate_overlap(asset1, asset2):
     if abs(asset1[2] - asset2[2]) == 0 or abs(asset1[2] - asset2[2]) == 180:
 
         # if both parallel to z axis 
-        if asset1[2] == 0 or asset1[2] == 180:
-            x1 = max(asset1[1]['x'] - asset1_width / 2, asset2[1]['x'] - asset2_width / 2)
-            z1 = min(asset1[1]['z'] + asset1_depth / 2, asset2[1]['z'] + asset2_depth / 2)
-            x2 = min(asset1[1]['x'] + asset1_width / 2, asset2[1]['x'] + asset2_width / 2)
-            z2 = max(asset1[1]['z'] - asset1_depth / 2, asset2[1]['z'] - asset2_depth / 2)
-            print x1,x2,z1,z2, 0
+        if asset1[2] == 0 or asset1[2] == 180: 
+            dx = min(asset1[1]['x'] + asset1_depth / 2, asset2[1]['x'] + asset2_depth / 2) - max(asset1[1]['x'] - asset1_depth / 2, asset2[1]['x'] - asset2_depth / 2)
+            dz = min(asset1[1]['z'] + asset1_width / 2, asset2[1]['z'] + asset2_width / 2) - max(asset1[1]['z'] - asset1_width / 2, asset2[1]['z'] - asset2_width / 2)
+            #print dx, dz, 0
         # if both parallel to x axis 
         elif asset1[2] == 90 or asset1[2] == 270: 
-            x1 = max(asset1[1]['x'] - asset1_depth / 2, asset2[1]['x'] - asset2_depth / 2)
-            z1 = min(asset1[1]['z'] + asset1_width / 2, asset2[1]['z'] + asset2_width / 2)
-            x2 = min(asset1[1]['x'] + asset1_depth / 2, asset2[1]['x'] + asset2_depth / 2)
-            z2 = max(asset1[1]['z'] - asset1_width / 2, asset2[1]['z'] - asset2_width / 2)
-            print x1, x2, z1, z2, 1
+            dx = min(asset1[1]['x'] + asset1_width / 2, asset2[1]['x'] + asset2_width / 2) - max(asset1[1]['x'] - asset1_width / 2, asset2[1]['x'] - asset2_width / 2)
+            dz = min(asset1[1]['z'] + asset1_depth / 2, asset2[1]['z'] + asset2_depth / 2) - max(asset1[1]['z'] - asset1_depth / 2, asset2[1]['z'] - asset2_depth / 2)
+            #print dx, dz, 1
             
     # if both 90 degrees angle to each other
     else:
  
-        if asset1[2] == 0 or asset1[2] == 180:
-            x1 = max(asset1[1]['x'] - asset1_width/2, asset2[1]['x'] - asset2_depth/2)
-            z1 = min(asset1[1]['z'] + asset1_depth/2, asset2[1]['z'] + asset2_width/2)
-            x2 = min(asset1[1]['x'] + asset1_width/2, asset2[1]['x'] + asset2_depth/2)
-            z2 = max(asset1[1]['z'] - asset1_depth/2, asset2[1]['z'] - asset2_width/2)
-            print x1,x2,z1,z2, 2
+        if asset1[2] == 0 or asset1[2] == 180: 
+            dx = min(asset1[1]['x'] + asset1_depth / 2, asset2[1]['x'] + asset2_width / 2) - max(asset1[1]['x'] - asset1_depth / 2, asset2[1]['x'] - asset2_width / 2) 
+            dz = min(asset1[1]['z'] + asset1_width / 2, asset2[1]['z'] + asset2_depth / 2) - max(asset1[1]['z'] - asset1_width / 2, asset2[1]['z'] - asset2_depth / 2)
+            #print dx, dz, 2
         elif asset1[2] == 90 or asset1[2] == 270: 
-            x1 = max(asset1[1]['x'] - asset1_depth/2, asset2[1]['x'] - asset2_width/2)
-            z1 = min(asset1[1]['z'] + asset1_width/2, asset2[1]['z'] + asset2_depth/2)
-            x2 = min(asset1[1]['x'] + asset1_depth/2, asset2[1]['x'] + asset2_width/2)
-            z2 = max(asset1[1]['z'] - asset1_width/2, asset2[1]['z'] - asset2_depth/2)
-            print x1, x2, z1, z2, 3
+            dx = min(asset1[1]['x'] + asset1_width/2, asset2[1]['x'] + asset2_depth/2) - max(asset1[1]['x'] - asset1_width/2, asset2[1]['x'] - asset2_depth/2)
+            dz = min(asset1[1]['z'] + asset1_depth/2, asset2[1]['z'] + asset2_width/2) - max(asset1[1]['z'] - asset1_depth/2, asset2[1]['z'] - asset2_width/2)
+            #print dx, dz, 3
 
-    intersection = abs((x2 - x1) * (z1 - z2))
+    if dx >= 0 and dz >= 0:
+        intersection = dx * dz
+    else:
+        intersection = 0
 
     return intersection

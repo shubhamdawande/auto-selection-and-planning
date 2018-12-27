@@ -8,9 +8,9 @@ with open('data/asset_list', 'rb') as fp:
     asset_data = pickle.load(fp)
 
 ## Customer inputs
-budget = 1000                     # in dollars
-room_dimensions = {'depth':100, 'width':100, 'height':100} # {depth, width, height} in feet
-room_type = "LivingRoom"          # room type
+budget = 1000  # in dollars
+room_dimensions = {'depth':10, 'width':10, 'height':10} # {depth, width, height} in feet
+room_type = "LivingRoom"  # room type
 
 ## hyperparameters
 n_generations = 2      # no of generations to iterate over
