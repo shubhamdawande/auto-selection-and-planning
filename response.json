@@ -1,0 +1,591 @@
+{
+    "status": "success",
+    "data": {
+        "assets": [
+            {
+                "price": {
+                    "customer": 0,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "www.Homefuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c20ee8d9222900fd2b7b1c9",
+                "name": "Bundle of books",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba4a959f120bf1cd051519f",
+                "vertical": "5ba4a964f120bf1cd05151a0",
+                "roomType": null,
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T14:34:53.298Z",
+                "updatedAt": "2018-12-24T14:34:59.301Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bfe3c69bf05724c0cedcaed"
+                },
+                "imageurl": ""
+            },
+            {
+                "price": {
+                    "customer": 0,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "www.Homefuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c20a3859222900fd2b79dd7",
+                "name": "Jenny Lind Grey Table Lamp",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba4a959f120bf1cd051519f",
+                "vertical": "5ba4a964f120bf1cd05151a0",
+                "roomType": null,
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T09:14:45.043Z",
+                "updatedAt": "2018-12-24T09:14:49.452Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bfe3c69bf05724c0cedcaed"
+                },
+                "imageurl": ""
+            },
+            {
+                "price": {
+                    "customer": 119,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b756d4f3f600d5793cada5e",
+                        "name": "Restoration Hardware"
+                    },
+                    "productUrl": "https://www.restorationhardware.com/catalog/product/product.jsp?productId=prod12660055&src=rel"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.5,
+                    "width": 1.75,
+                    "height": 1.08
+                },
+                "currency": "USD",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c208d6d9222900fd2b7998b",
+                "name": "STOWE BRUSHED ALPACA BAND & STRIPE PILLOW COVER - LUMBAR",
+                "description": "",
+                "category": "5b029a5796a1324d4c54aae1",
+                "subcategory": "5b02a2bf96a1324d4c54ab24",
+                "vertical": "5b7ac8bb3f600d5793caef06",
+                "roomType": {
+                    "_id": "5afae78a6347bf11dd429b31",
+                    "name": "Living Room"
+                },
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T07:40:29.248Z",
+                "updatedAt": "2018-12-24T07:44:00.028Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bd6ca3b47dda81c668ff94e"
+                },
+                "imageurl": "https://homefuly.com:3443/assets/5c208d6d9222900fd2b7998b/5c208d6d9222900fd2b7998b.jpg"
+            },
+            {
+                "price": {
+                    "customer": 0,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "www.HomeFuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c208c369222900fd2b79852",
+                "name": "Wood Gallery in a Box frames",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba4a959f120bf1cd051519f",
+                "vertical": "5ba4a964f120bf1cd05151a0",
+                "roomType": null,
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T07:35:18.445Z",
+                "updatedAt": "2018-12-24T07:35:23.564Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bfe3c69bf05724c0cedcaed"
+                },
+                "imageurl": ""
+            },
+            {
+                "price": {
+                    "customer": 1,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "homefuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c208aa59222900fd2b797b7",
+                "name": "sofa throw",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba234a2e852e80dad11b656",
+                "vertical": "5ba234efe852e80dad11b659",
+                "roomType": {
+                    "_id": "5afae78a6347bf11dd429b31",
+                    "name": "Living Room"
+                },
+                "warranty": "",
+                "theme": {
+                    "_id": "5b6c4dd71c18180c88cde7b7",
+                    "name": "Mid Century"
+                },
+                "weight": "",
+                "createdAt": "2018-12-24T07:28:37.919Z",
+                "updatedAt": "2018-12-24T07:28:52.530Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bf39ddb96174b1aaf340364"
+                },
+                "imageurl": ""
+            },
+            {
+                "price": {
+                    "customer": 0,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "www.Homefuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c2087f29222900fd2b797b6",
+                "name": "Dwarf statue",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba4a959f120bf1cd051519f",
+                "vertical": "5ba4a964f120bf1cd05151a0",
+                "roomType": null,
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T07:17:06.872Z",
+                "updatedAt": "2018-12-24T07:17:11.110Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bfe3c69bf05724c0cedcaed"
+                },
+                "imageurl": ""
+            },
+            {
+                "price": {
+                    "customer": 2099,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b756b073f600d5793cada58",
+                        "name": "Crate And Barrel"
+                    },
+                    "productUrl": "https://www.crateandbarrel.com/atwood-queen-bed-without-bookcase-footboard/s661483"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 7.42,
+                    "width": 6.42,
+                    "height": 3.08
+                },
+                "currency": "USD",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "floor",
+                "assetType": "product",
+                "_id": "5c2082d29222900fd2b79328",
+                "name": "Atwood Queen Bed without Bookcase Footboard",
+                "description": "",
+                "category": "5b029a3896a1324d4c54aae0",
+                "subcategory": "5b029c3d96a1324d4c54aaee",
+                "vertical": "5b02a1ac96a1324d4c54ab1c",
+                "roomType": {
+                    "_id": "5b0f983c75f49b041f322f64",
+                    "name": "Master Bedroom"
+                },
+                "warranty": "",
+                "theme": {
+                    "_id": "5b6c4dd71c18180c88cde7b7",
+                    "name": "Mid Century"
+                },
+                "weight": "",
+                "createdAt": "2018-12-24T06:55:14.580Z",
+                "updatedAt": "2018-12-24T06:56:21.897Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bf39ddb96174b1aaf340364"
+                },
+                "imageurl": "https://homefuly.com:3443/assets/5c2082d29222900fd2b79328/5c2082d29222900fd2b79328.jpg"
+            },
+            {
+                "price": {
+                    "customer": 0,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "www.Homefuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c2080249222900fd2b7926f",
+                "name": "Statue",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba4a959f120bf1cd051519f",
+                "vertical": "5ba4a964f120bf1cd05151a0",
+                "roomType": null,
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T06:43:48.841Z",
+                "updatedAt": "2018-12-24T06:43:53.329Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bfe3c69bf05724c0cedcaed"
+                },
+                "imageurl": ""
+            },
+            {
+                "price": {
+                    "customer": 169,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b756d4f3f600d5793cada5e",
+                        "name": "Restoration Hardware"
+                    },
+                    "productUrl": "https://www.restorationhardware.com/catalog/product/product.jsp?productId=prod12660054&src=rel"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.5,
+                    "width": 2.17,
+                    "height": 2.17
+                },
+                "currency": "USD",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c207f929222900fd2b7926d",
+                "name": "STOWE BRUSHED ALPACA BAND & STRIPE PILLOW COVER - SQUARE",
+                "description": "",
+                "category": "5b029a5796a1324d4c54aae1",
+                "subcategory": "5b02a2bf96a1324d4c54ab24",
+                "vertical": "5b02a3bb96a1324d4c54ab2f",
+                "roomType": {
+                    "_id": "5afae78a6347bf11dd429b31",
+                    "name": "Living Room"
+                },
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T06:41:22.750Z",
+                "updatedAt": "2018-12-24T06:41:31.114Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bd6ca3b47dda81c668ff94e"
+                },
+                "imageurl": "https://homefuly.com:3443/assets/5c207f929222900fd2b7926d/5c207f929222900fd2b7926d.jpg"
+            },
+            {
+                "price": {
+                    "customer": 1,
+                    "vendor": null
+                },
+                "finish": {
+                    "internal": [],
+                    "external": []
+                },
+                "designedBy": {
+                    "name": "",
+                    "organization": "",
+                    "organizationInternalLink": {
+                        "_id": "5b7670853f600d5793cadf64",
+                        "name": "Homefuly"
+                    },
+                    "productUrl": "homefuly.com"
+                },
+                "material": {
+                    "basewood": "",
+                    "thickness": "",
+                    "brand": "",
+                    "assembly": ""
+                },
+                "dimension": {
+                    "depth": 0.08,
+                    "width": 0.08,
+                    "height": 0.08
+                },
+                "currency": "INR",
+                "images": [],
+                "internal_variant": [],
+                "components": [],
+                "status": "active",
+                "tags": [],
+                "glossy": false,
+                "mountType": "wall",
+                "assetType": "product",
+                "_id": "5c2077fa9222900fd2b78d26",
+                "name": "curtain big",
+                "description": "",
+                "category": "5ba23435e852e80dad11b653",
+                "subcategory": "5ba234a2e852e80dad11b656",
+                "vertical": "5ba234efe852e80dad11b659",
+                "roomType": {
+                    "_id": "5b0f983c75f49b041f322f64",
+                    "name": "Master Bedroom"
+                },
+                "warranty": "",
+                "theme": null,
+                "weight": "",
+                "createdAt": "2018-12-24T06:08:58.063Z",
+                "updatedAt": "2018-12-24T06:09:02.226Z",
+                "__v": 0,
+                "uploadedby": {
+                    "_id": "5bf39ddb96174b1aaf340364"
+                },
+                "imageurl": ""
+            }
+        ],
+        "count": 10,
+        "total": 1934
+    },
+    "message": null
+}
