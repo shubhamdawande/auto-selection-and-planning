@@ -25,12 +25,12 @@ def calculate_clearance_term(layout_id, layout):
         for j in range(i + 1, len(layout)):
             asset1 = layout[i]
             asset2 = layout[j]
-            overlap = calculate_overlap(asset1, asset2, padding)
+            iou = calculate_iou(asset1, asset2, padding)
 
-            #print i, j, layout_id, asset1[2], asset2[2], overlap
+            #print layout_id, i, j, overlap, "...",
             #print asset1[1], [asset1[0]._dimension['depth'], asset1[0]._dimension['width']], asset2[1], [asset2[0]._dimension['depth'], asset2[0]._dimension['width']] 
             
-            total_overlap += overlap
+            total_overlap += iou
 
     cost += total_overlap
     return cost
@@ -39,7 +39,13 @@ def calculate_clearance_term(layout_id, layout):
 ## intersection over union
 def calculate_iou(asset1, asset2, padding):
 
-    return calculate_overlap(asset1, asset2, padding)
+    intersection = calculate_overlap(asset1, asset2, padding)
+
+    area_asset1 = (asset1[0]._dimension['depth'] + 2 * padding) * (asset1[0]._dimension['width'] + 2 * padding)
+    area_asset2 = (asset2[0]._dimension['depth'] + 2 * padding) * (asset2[0]._dimension['width'] + 2 * padding)
+    union = area_asset1 + area_asset2 - intersection
+
+    return intersection/union
 
 
 ## Utility function: calculate overlap of two axis aligned rectangular bounding boxes

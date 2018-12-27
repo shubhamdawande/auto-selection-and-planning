@@ -11,7 +11,7 @@ with open('data/asset_list', 'rb') as fp:
 
 ## Customer inputs
 budget = 1000  # in dollars
-room_dimensions = {'depth':10, 'width':10, 'height':10} # {depth, width, height} in feet
+room_dimensions = {'depth':30, 'width':30, 'height':20} # {depth, width, height} in feet
 room_type = "LivingRoom"  # room type
 
 ## hyperparameters
@@ -165,7 +165,6 @@ def create_next_generation(current_population, population_cost):
     
     # create new layouts from crossover of parents
     random.shuffle(next_best_breeders)
-    
     print "Finding Child layouts from 70 percent best ones....."
     child_layouts = create_child_layouts(next_best_breeders)
     
@@ -214,7 +213,8 @@ def multiple_generations():
         print "\ngeneration number:  ", g
         for k, v in generation_costs[g].items():
             print v,",", 
-    
+
+
 if __name__ == "__main__":
     print "Population Size: ", population_size, ", No of Generations: ", n_generations
     multiple_generations()
