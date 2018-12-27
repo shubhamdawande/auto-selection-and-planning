@@ -1,7 +1,9 @@
 import pickle
 import random
 import operator
-from cost_function import calculate_cost
+import numpy as np
+import sys
+from cost_function import calculate_cost, calculate_overlap
 
 ## Load asset data
 with open('data/asset_list', 'rb') as fp:
@@ -13,10 +15,9 @@ room_dimensions = {'depth':10, 'width':10, 'height':10} # {depth, width, height}
 room_type = "LivingRoom"  # room type
 
 ## hyperparameters
-n_generations = 2      # no of generations to iterate over
-population_size = 100  # initial number of layouts
+n_generations = 10      # no of generations to iterate over
+population_size = 200  # initial number of layouts
 _id = 0                # unique id of each layout
-
 
 ## Create a layout
 def generate_random_layout():
@@ -64,48 +65,156 @@ def generate_random_layout():
 
 ## Create initial population
 def generate_first_population():
-    
+
     initial_population = []
     for i in range(0, population_size):
         initial_population.append(generate_random_layout())
-    
     return initial_population
 
 
-## sort population as per fitness/cost function
+## Returns sorted population as per fitness/cost function
 def evaluate_population(current_population):
 
-    sorted_population = {}
+    population_cost = {}
     
     for i in range(0, population_size):
-        individual_layout = current_population[i]
-        sorted_population[individual_layout.items()[0][0]] = calculate_cost(individual_layout)
+        
+        # layout structure: {id : asset_layouts_list}
+        # asset_layouts_list: list of [asset object, position, rotation]
+        individual_layout = current_population[i] 
+        population_cost[individual_layout.items()[0][0]] = calculate_cost(individual_layout)
 
-    return sorted(sorted_population.items(), key = operator.itemgetter(1), reverse=False)
+    return population_cost
+    #return sorted(sorted_population.items(), key = operator.itemgetter(1), reverse=False)
 
+
+## Cross over from two parents
+def create_child(parent1, parent2):
+
+    global _id
+    p1_asset_list = parent1.items()[0][1]
+    p2_asset_list = parent1.items()[0][1]
+    
+    count = len(p1_asset_list)/2
+
+    while count >= 0:
+        p1_asset_ind = random.randint(0, len(p1_asset_list)-1)
+        p2_asset_ind = random.randint(0, len(p2_asset_list)-1)
+        
+        # check if parent 1 asset does not conflict with any asset from parent 2
+        flag = True
+        for asset in p2_asset_list:
+            if calculate_overlap(p1_asset_list[p1_asset_ind], asset, 0) > 0:
+                flag = False
+                break
+
+        if flag:
+            p2_asset_list[p2_asset_ind] = p1_asset_list[p1_asset_ind]
+        
+        count -= 1
+
+    child = {_id: p2_asset_list}
+    _id += 1
+    return child
+
+
+## Create a child layout from best parents from next generation
+def create_child_layouts(best_parent_layouts):
+
+    child_layout_list = []
+    temp = np.arange(len(best_parent_layouts))
+
+    for i in range(0, int(population_size * 0.3)):
+
+        #print "Children number created: ", i
+        [parent1, parent2] = random.sample(temp, 2)
+        child_layout_list.append(create_child(best_parent_layouts[parent1], best_parent_layouts[parent2]))
+
+    return child_layout_list
+
+
+## Tournament selection for current population
+def create_next_generation(current_population, population_cost):
+
+    next_best_breeders = []
+
+    # select 70% best layouts from current population
+    # tournament size
+    k = 10  
+    arr = np.arange(population_size)
+    
+    while len(next_best_breeders) < population_size*0.7:
+
+        #print "next breeders found: ", len(next_best_breeders)
+
+        # select k random layouts
+        #sample_indices = np.random.randint(0, population_size, k, replace=False)
+        sample_indices = random.sample(arr, k)
+        winner_cost = sys.maxint
+        winner_index = 0
+
+        for i in sample_indices:
+            layout = current_population[i]
+            cost = population_cost[layout.items()[0][0]]
+            if cost < winner_cost:
+                winner_cost = cost
+                winner_index = i
+
+        next_best_breeders.append(current_population[winner_index])
+        np.delete(arr, winner_index)
+    
+    # create new layouts from crossover of parents
+    random.shuffle(next_best_breeders)
+    
+    print "Finding Child layouts from 70 percent best ones....."
+    child_layouts = create_child_layouts(next_best_breeders)
+    
+    print "Created 30 percent child layouts....."
+    g = next_best_breeders + child_layouts
+    random.shuffle(g)
+
+    return g 
 
 ## Generate next generation from current population
 def next_generation(current_population):
+     
+    # find cost of individuals in population
+    population_cost = evaluate_population(current_population)
+
+    #for _, value in population_cost.items():
+    #    print "cost:", value 
+
+    print "Calculated population cost...."
+
+    # Selection stage: tournament selection
+    next_breeders = create_next_generation(current_population, population_cost)
     
-    # sort population as per cost function
-    sorted_population = evaluate_population(current_population)
+    print "Calculated next generation...."
 
-    # selection, mutation to be done
+    # Mutation stage
 
-    return []
+    return [next_breeders, population_cost]
 
 
 ## Traverse over multiple generations
 def multiple_generations():
 
     historic = []
+    generation_costs = []
     historic.append(generate_first_population())
+    
+    for i in range(0, n_generations - 1):
+        print "Generation: ", i
+        temp = next_generation(historic[i])
+        historic.append(temp[0])
+        generation_costs.append(temp[1])
 
-    for i in range(0, n_generations-1):
-        historic.append(next_generation(historic[i]))
-
-    return historic
-
-
+    # print costs
+    for g in range(n_generations-1):
+        print "\ngeneration number:  ", g
+        for k, v in generation_costs[g].items():
+            print v,",", 
+    
 if __name__ == "__main__":
-    generations = multiple_generations()
+    print "Population Size: ", population_size, ", No of Generations: ", n_generations
+    multiple_generations()

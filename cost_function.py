@@ -1,24 +1,32 @@
-padding = 0
-
 ## Cost function
 ## Based upon ergonomic, functional and visual needs defined by interior design guidelines  
 def calculate_cost(layout):
 
-    cost = 0
+    total_cost = 0
     layout_id = layout.items()[0][0]
     layout = layout.items()[0][1]
-    total_overlap = 0
     
-    # clearance constraint
+    cost_clearance = calculate_clearance_term(layout_id, layout)
+    
+    # calculate final cost
+    total_cost = cost_clearance
+
+    return total_cost
+
+
+## Clearance constraint
+def calculate_clearance_term(layout_id, layout):
+
+    cost = 0
+    padding = 1
+    total_overlap = 0
     for i in range(0, len(layout)-1):
         
         for j in range(i + 1, len(layout)):
             asset1 = layout[i]
             asset2 = layout[j]
-            overlap = calculate_overlap(asset1, asset2)
+            overlap = calculate_overlap(asset1, asset2, padding)
 
-            #if overlap == 0:
-            print layout_id, overlap
             #print i, j, layout_id, asset1[2], asset2[2], overlap
             #print asset1[1], [asset1[0]._dimension['depth'], asset1[0]._dimension['width']], asset2[1], [asset2[0]._dimension['depth'], asset2[0]._dimension['width']] 
             
@@ -28,8 +36,14 @@ def calculate_cost(layout):
     return cost
 
 
-## Utility function
-def calculate_overlap(asset1, asset2):
+## intersection over union
+def calculate_iou(asset1, asset2, padding):
+
+    return calculate_overlap(asset1, asset2, padding)
+
+
+## Utility function: calculate overlap of two axis aligned rectangular bounding boxes
+def calculate_overlap(asset1, asset2, padding):
 
     # calculate padded dimentions
     asset1_depth = asset1[0]._dimension['depth'] + 2 * padding
@@ -37,11 +51,9 @@ def calculate_overlap(asset1, asset2):
     asset2_depth = asset2[0]._dimension['depth'] + 2 * padding
     asset2_width = asset2[0]._dimension['width'] + 2 * padding
 
-    x1 = 0
-    x2 = 0
-    z1 = 0
-    z2 = 0
-        
+    dx = 0
+    dz = 0
+
     # compute overlap between axis aligned rectangles
     # if assets parallel to each other
     if abs(asset1[2] - asset2[2]) == 0 or abs(asset1[2] - asset2[2]) == 180:
