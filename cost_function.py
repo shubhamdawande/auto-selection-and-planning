@@ -10,7 +10,7 @@ def calculate_cost(layout, room_dim):
 
     # calculate final cost
     wt_clearance = 1
-    wt_proportion = 1
+    wt_proportion = 0
     total_cost = wt_clearance * cost_clearance + wt_proportion * cost_proportion
 
     return total_cost
