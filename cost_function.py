@@ -1,40 +1,55 @@
 ## Cost function
 ## Based upon ergonomic, functional and visual needs defined by interior design guidelines  
-def calculate_cost(layout):
+def calculate_cost(layout, room_dim):
 
     total_cost = 0
-    layout_id = layout.items()[0][0]
-    layout = layout.items()[0][1]
+    layout_assets = layout.items()[0][1]
     
-    cost_clearance = calculate_clearance_term(layout_id, layout)
-    
+    cost_clearance = calculate_clearance_term(layout_assets)
+    cost_proportion = calculate_proportion_term(layout_assets, room_dim)
+
     # calculate final cost
-    total_cost = cost_clearance
+    wt_clearance = 1
+    wt_proportion = 1
+    total_cost = wt_clearance * cost_clearance + wt_proportion * cost_proportion
 
     return total_cost
 
 
 ## Clearance constraint
-def calculate_clearance_term(layout_id, layout):
+def calculate_clearance_term(layout_assets):
 
-    cost = 0
     padding = 1
-    total_overlap = 0
-    for i in range(0, len(layout)-1):
+    total_iou = 0 # intersection over union
+    
+    for i in range(0, len(layout_assets)-1):
         
-        for j in range(i + 1, len(layout)):
-            asset1 = layout[i]
-            asset2 = layout[j]
+        for j in range(i + 1, len(layout_assets)):
+            asset1 = layout_assets[i]
+            asset2 = layout_assets[j]
             iou = calculate_iou(asset1, asset2, padding)
 
             #print layout_id, i, j, overlap, "...",
             #print asset1[1], [asset1[0]._dimension['depth'], asset1[0]._dimension['width']], asset2[1], [asset2[0]._dimension['depth'], asset2[0]._dimension['width']] 
             
-            total_overlap += iou
+            total_iou += iou
 
-    cost += total_overlap
-    return cost
+    return total_iou/(len(layout_assets) * (len(layout_assets)-1))
 
+
+## Area proportions constraint
+def calculate_proportion_term(layout_assets, room_dim):
+    
+    room_area = room_dim['width'] * room_dim['depth']
+    req_coverage_ratio = 0.35
+
+    covered_area = 0
+    for asset in layout_assets:
+        covered_area += asset[0]._dimension['width'] * asset[0]._dimension['depth']
+
+    return max(req_coverage_ratio - covered_area/room_area, 0)/req_coverage_ratio  
+
+### Utility functions
 
 ## intersection over union
 def calculate_iou(asset1, asset2, padding):
@@ -48,7 +63,7 @@ def calculate_iou(asset1, asset2, padding):
     return intersection/union
 
 
-## Utility function: calculate overlap of two axis aligned rectangular bounding boxes
+## calculate overlap of two axis aligned rectangular bounding boxes
 def calculate_overlap(asset1, asset2, padding):
 
     # calculate padded dimentions

@@ -4,20 +4,23 @@ import operator
 import numpy as np
 import sys
 from cost_function import calculate_cost, calculate_overlap
+import tkinter
 
 ## Load asset data
 with open('data/asset_list', 'rb') as fp:
     asset_data = pickle.load(fp)
 
 ## Customer inputs
-budget = 1000  # in dollars
+budget = 2000  # in dollars
 room_dimensions = {'depth':30, 'width':30, 'height':20} # {depth, width, height} in feet
 room_type = "LivingRoom"  # room type
 
 ## hyperparameters
-n_generations = 10      # no of generations to iterate over
-population_size = 200  # initial number of layouts
+n_generations = 10     # no of generations to iterate over
+population_size = 200   # initial number of layouts
+tournament_size = int(population_size*0.3)
 _id = 0                # unique id of each layout
+
 
 ## Create a layout
 def generate_random_layout():
@@ -82,7 +85,7 @@ def evaluate_population(current_population):
         # layout structure: {id : asset_layouts_list}
         # asset_layouts_list: list of [asset object, position, rotation]
         individual_layout = current_population[i] 
-        population_cost[individual_layout.items()[0][0]] = calculate_cost(individual_layout)
+        population_cost[individual_layout.items()[0][0]] = calculate_cost(individual_layout, room_dimensions)
 
     return population_cost
     #return sorted(sorted_population.items(), key = operator.itemgetter(1), reverse=False)
@@ -140,29 +143,43 @@ def create_next_generation(current_population, population_cost):
 
     # select 70% best layouts from current population
     # tournament size
-    k = 10  
     arr = np.arange(population_size)
     
     while len(next_best_breeders) < population_size*0.7:
 
-        #print "next breeders found: ", len(next_best_breeders)
-
-        # select k random layouts
-        #sample_indices = np.random.randint(0, population_size, k, replace=False)
-        sample_indices = random.sample(arr, k)
+        # select tournament_size random layouts
+        
+        sample_indices = random.sample(xrange(len(arr)), tournament_size)
         winner_cost = sys.maxint
         winner_index = 0
 
-        for i in sample_indices:
+        #print "arr:", arr
+        #print "Sample indices:", sample_indices
+        
+        for ind in sample_indices:
+            #print "ind:", ind
+            i = arr[ind]
+            #print "i:", i
             layout = current_population[i]
             cost = population_cost[layout.items()[0][0]]
             if cost < winner_cost:
                 winner_cost = cost
-                winner_index = i
+                winner_index = ind
 
-        next_best_breeders.append(current_population[winner_index])
-        np.delete(arr, winner_index)
-    
+        #print "winner_index:", winner_index
+        #print "arr[winner_index]:", arr[winner_index]
+        next_best_breeders.append(current_population[arr[winner_index]])
+        arr = np.delete(arr, winner_index)
+
+    '''
+    # debug
+    print "\n\nPrinting 70 percent next best layouts:"
+    for l in next_best_breeders:
+        print "layout id:", l.items()[0][0]
+        for a in l.items()[0][1]:
+            print a[0]._category, a[0]._subcategory, a[0]._vertical
+    '''
+
     # create new layouts from crossover of parents
     random.shuffle(next_best_breeders)
     print "Finding Child layouts from 70 percent best ones....."
@@ -174,29 +191,106 @@ def create_next_generation(current_population, population_cost):
 
     return g 
 
+
+## Mutation stage
+def mutate_design(layout):
+
+    layout_id = layout.items()[0][0]
+    assets = layout.items()[0][1]
+
+    # 1. Randomly change positions
+    prob_trans = 0.4 # probability of random translation
+    obj_indices = random.sample(xrange(len(assets)), int(len(assets) * prob_trans))
+    
+    for i in obj_indices:
+        asset = assets[i]
+        count = 10
+    
+        while count >= 0:
+            rotation = asset[2]
+            if rotation == 0 or rotation == 180:
+                x_position = random.uniform(0 + asset[0]._dimension['depth']/2, room_dimensions['width'] - asset[0]._dimension['depth']/2)
+                z_position = random.uniform(0 + asset[0]._dimension['width']/2, room_dimensions['depth'] - asset[0]._dimension['width']/2)
+            else:
+                x_position = random.uniform(0 + asset[0]._dimension['width']/2, room_dimensions['width'] - asset[0]._dimension['width']/2)
+                z_position = random.uniform(0 + asset[0]._dimension['depth']/2, room_dimensions['depth'] - asset[0]._dimension['depth']/2)
+
+            old_position = asset[1]
+            new_position = {'x' : x_position, 'z' : z_position}
+            asset[1] = new_position
+
+            # check if new position does not intersect with other assets
+            flag = True
+            for a in assets:
+                if a[1] != old_position:
+                    if calculate_overlap(a, asset, 0) > 0:
+                        flag == False
+                        break
+            
+            if flag:
+                assets[i] = asset
+                break
+            count -= 1
+
+    # 1. Randomly change rotations
+    prob_rot = 0.4 # probability of random rotation
+    obj_indices = random.sample(xrange(len(assets)), int(len(assets) * prob_rot))
+    
+    for i in obj_indices:
+        asset = assets[i]
+        count = 10
+    
+        while count >= 0:
+            old_rotation = asset[2]
+            new_rotation = random.choice([old_rotation-90, old_rotation+90])
+            asset[2] = new_rotation
+
+            # check if new orientation does not intersect with other assets
+            flag = True
+            for a in assets:
+                if a[1] != asset[1]:
+                    if calculate_overlap(a, asset, 0) > 0:
+                        flag == False
+                        break
+            
+            if flag:
+                assets[i] = asset
+                break
+            count -= 1
+
+    # return modified design
+    layout[layout_id] = assets
+    return layout
+
+
 ## Generate next generation from current population
 def next_generation(current_population):
      
     # find cost of individuals in population
     population_cost = evaluate_population(current_population)
-
-    #for _, value in population_cost.items():
-    #    print "cost:", value 
-
+    
     print "Calculated population cost...."
+    #for _, value in population_cost.items():
+    #    print "cost:", value
 
-    # Selection stage: tournament selection
+    # selection stage: tournament selection
     next_breeders = create_next_generation(current_population, population_cost)
     
     print "Calculated next generation...."
-
-    # Mutation stage
+    
+    # mutation stage....to be done.....
+    print "Mutating 50 percent of assets...."
+    random.shuffle(next_breeders)
+    
+    for i in range(0, int(len(next_breeders)/2)):
+        layout_new = mutate_design(next_breeders[i])
+        next_breeders[i] = layout_new
 
     return [next_breeders, population_cost]
 
 
 ## Traverse over multiple generations
-def multiple_generations():
+def generate_multiple_generations():
 
     historic = []
     generation_costs = []
@@ -208,13 +302,31 @@ def multiple_generations():
         historic.append(temp[0])
         generation_costs.append(temp[1])
 
-    # print costs
+
+    # print costs for all generations
     for g in range(n_generations-1):
         print "\ngeneration number:  ", g
         for k, v in generation_costs[g].items():
             print v,",", 
 
+    '''
+    # print design assets of all generations
+    for gen in range(0, n_generations-1):
+        print "\nGeneration designs: ", gen
+        for l in historic[gen]:
+            print "layout id:", l.items()[0][0]
+            for a in l.items()[0][1]:
+                print a[0]._category, a[0]._subcategory, a[0]._vertical
+    '''
+
+    # python data visualizer
+    root = tkinter.Tk()
+    root.geometry("50x50")
+    canvas = Canvas(root, width=room_dimensions['width'], height=room_dimensions['depth'])
+    canvas.pack()
+
+    root.mainloop()
 
 if __name__ == "__main__":
     print "Population Size: ", population_size, ", No of Generations: ", n_generations
-    multiple_generations()
+    generate_multiple_generations()
