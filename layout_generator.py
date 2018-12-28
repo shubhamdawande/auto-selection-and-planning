@@ -5,6 +5,7 @@ import numpy as np
 import sys
 from cost_function import calculate_cost, calculate_overlap
 import tkinter
+import time
 
 ## Load asset data
 with open('data/asset_list', 'rb') as fp:
@@ -267,26 +268,54 @@ def mutate_design(layout):
 def next_generation(current_population):
      
     # find cost of individuals in population
-    population_cost = evaluate_population(current_population)
-    
+    population_cost = evaluate_population(current_population)    
     print "Calculated population cost...."
-    #for _, value in population_cost.items():
-    #    print "cost:", value
 
     # selection stage: tournament selection
     next_breeders = create_next_generation(current_population, population_cost)
-    
     print "Calculated next generation...."
     
     # mutation stage....to be done.....
     print "Mutating 50 percent of assets...."
     random.shuffle(next_breeders)
     
+    '''
     for i in range(0, int(len(next_breeders)/2)):
         layout_new = mutate_design(next_breeders[i])
         next_breeders[i] = layout_new
-
+    '''
     return [next_breeders, population_cost]
+
+
+# python visualizer
+scale = 15
+root = tkinter.Tk()
+canvas = tkinter.Canvas(root, bg='green', width=scale*room_dimensions['width'], height=scale*room_dimensions['depth'])
+canvas.pack()
+
+def update(i, generation_costs, historic):
+
+    if i > 50:
+        return
+
+    layout = historic[n_generations - 2][i]
+    print generation_costs[n_generations-2][layout.items()[0][0]]
+        
+    if generation_costs[n_generations-2][layout.items()[0][0]] >= 0:
+
+        print "Plotting layout....."
+        asset_list = layout.items()[0][1]
+        for asset in asset_list:
+            print asset[1]
+            print asset[0]._vertical
+            if asset[2] == 0 or asset[2] == 180: 
+                canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['depth']/2), scale*(asset[1]['z'] - asset[0]._dimension['width']/2), scale*(asset[1]['x'] + asset[0]._dimension['depth']/2), scale*(asset[1]['z'] + asset[0]._dimension['width']/2), fill='red')
+            else:
+                canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['width']/2), scale*(asset[1]['z'] - asset[0]._dimension['depth']/2), scale*(asset[1]['x'] + asset[0]._dimension['width']/2), scale*(asset[1]['z'] + asset[0]._dimension['depth']/2), fill='red')
+    
+    canvas.after(2, update(canvas, i + 1, generation_costs, historic))
+    canvas.delete(all)
+    print "debug:", i+1
 
 
 ## Traverse over multiple generations
@@ -302,14 +331,13 @@ def generate_multiple_generations():
         historic.append(temp[0])
         generation_costs.append(temp[1])
 
-
+    '''
     # print costs for all generations
     for g in range(n_generations-1):
         print "\ngeneration number:  ", g
         for k, v in generation_costs[g].items():
             print v,",", 
 
-    '''
     # print design assets of all generations
     for gen in range(0, n_generations-1):
         print "\nGeneration designs: ", gen
@@ -320,12 +348,30 @@ def generate_multiple_generations():
     '''
 
     # python data visualizer
-    root = tkinter.Tk()
-    root.geometry("50x50")
-    canvas = Canvas(root, width=room_dimensions['width'], height=room_dimensions['depth'])
-    canvas.pack()
+
+    #for i in range(0, population_size):
+    update(0, generation_costs, historic)
+
+    '''
+        layout = historic[n_generations - 2][i]
+        print generation_costs[n_generations-2][layout.items()[0][0]]
+        
+        if generation_costs[n_generations-2][layout.items()[0][0]] <= 0.1:
+
+            print "Plotting layout....."
+            asset_list = layout.items()[0][1]
+            for asset in asset_list:
+                print asset[1]
+                print asset[0]._vertical
+                #if asset[2] == 0 or asset[2] == 180: 
+                #    canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['depth']/2), scale*(asset[1]['z'] - asset[0]._dimension['width']/2), scale*(asset[1]['x'] + asset[0]._dimension['depth']/2), scale*(asset[1]['z'] + asset[0]._dimension['width']/2), fill='red')
+                #else:
+                #    canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['width']/2), scale*(asset[1]['z'] - asset[0]._dimension['depth']/2), scale*(asset[1]['x'] + asset[0]._dimension['width']/2), scale*(asset[1]['z'] + asset[0]._dimension['depth']/2), fill='red')
+                update(asset)
+    '''
 
     root.mainloop()
+
 
 if __name__ == "__main__":
     print "Population Size: ", population_size, ", No of Generations: ", n_generations
