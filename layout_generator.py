@@ -18,9 +18,16 @@ room_type = "LivingRoom"  # room type
 
 ## hyperparameters
 n_generations = 10     # no of generations to iterate over
-population_size = 500   # initial number of layouts
+population_size = 100   # initial number of layouts
 tournament_size = int(population_size*0.3)
 _id = 0                # unique id of each layout
+
+# python visualizer
+scale = 10
+root = tkinter.Tk()
+root.geometry("600x600")
+canvas = tkinter.Canvas(root, bg='green', width=scale*room_dimensions['width'], height=scale*room_dimensions['depth'])
+canvas.pack()
 
 
 ## Create a layout
@@ -158,17 +165,13 @@ def create_next_generation(current_population, population_cost):
         #print "Sample indices:", sample_indices
         
         for ind in sample_indices:
-            #print "ind:", ind
             i = arr[ind]
-            #print "i:", i
             layout = current_population[i]
             cost = population_cost[layout.items()[0][0]]
             if cost < winner_cost:
                 winner_cost = cost
                 winner_index = ind
 
-        #print "winner_index:", winner_index
-        #print "arr[winner_index]:", arr[winner_index]
         next_best_breeders.append(current_population[arr[winner_index]])
         arr = np.delete(arr, winner_index)
 
@@ -287,40 +290,46 @@ def next_generation(current_population):
     return [next_breeders, population_cost]
 
 
-# python visualizer
-scale = 15
-root = tkinter.Tk()
-root.geometry("500x500")
-canvas = tkinter.Canvas(root, bg='green', width=scale*room_dimensions['width'], height=scale*room_dimensions['depth'])
-canvas.pack()
 
 def render_layouts(generation_costs, historic):
 
     for i in range(0, population_size):
         
-        layout = historic[n_generations - 2][i]
-        print generation_costs[n_generations-2][layout.items()[0][0]]
+        gen_index = n_generations-2
+        layout = historic[gen_index][i]
+        print generation_costs[gen_index][layout.items()[0][0]]
             
-        if generation_costs[n_generations-2][layout.items()[0][0]] <= 0.1:
+        if generation_costs[gen_index][layout.items()[0][0]] <= 0.3:
 
             print "Plotting layout....."
             asset_list = layout.items()[0][1]
             for asset in asset_list:
-                print asset[1]
-                print asset[0]._vertical
+                
+                print "\nasset position:", asset[1]
+                print "asset rotation:", asset[2]
+                print asset[0]._dimension
+
+                asset[1] = {'x' : asset[1]['x'], 'z' : room_dimensions['depth'] - asset[1]['z']}
+
                 if asset[2] == 0 or asset[2] == 180: 
-                    canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['depth']/2), scale*(asset[1]['z'] - asset[0]._dimension['width']/2), scale*(asset[1]['x'] + asset[0]._dimension['depth']/2), scale*(asset[1]['z'] + asset[0]._dimension['width']/2), fill='red')
+                    canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['depth'] / 2),
+                    scale*(asset[1]['z'] + asset[0]._dimension['width'] / 2),
+                    scale*(asset[1]['x'] + asset[0]._dimension['depth'] / 2),
+                    scale*(asset[1]['z'] - asset[0]._dimension['width'] / 2),
+                    fill='red')
                 else:
-                    canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['width']/2), scale*(asset[1]['z'] - asset[0]._dimension['depth']/2), scale*(asset[1]['x'] + asset[0]._dimension['width']/2), scale*(asset[1]['z'] + asset[0]._dimension['depth']/2), fill='red')
+                    canvas.create_rectangle(scale * (asset[1]['x'] - asset[0]._dimension['width'] / 2),
+                    scale * (asset[1]['z'] + asset[0]._dimension['depth'] / 2),
+                    scale * (asset[1]['x'] + asset[0]._dimension['width'] / 2),
+                    scale*(asset[1]['z'] - asset[0]._dimension['depth']/2), 
+                    fill='red')
 
             root.update()
+            print "debug:", i
             time.sleep(.5)
             canvas.delete("all")
-            print "debug:", i
     
     root.mainloop()
-    #canvas.after(20, update(i + 1, generation_costs, historic))
-    #print "debug:", i+1
 
 
 ## Traverse over multiple generations
@@ -336,13 +345,14 @@ def generate_multiple_generations():
         historic.append(temp[0])
         generation_costs.append(temp[1])
 
-    '''
+
     # print costs for all generations
     for g in range(n_generations-1):
         print "\ngeneration number:  ", g
         for k, v in generation_costs[g].items():
             print v,",", 
 
+    '''
     # print design assets of all generations
     for gen in range(0, n_generations-1):
         print "\nGeneration designs: ", gen
@@ -353,7 +363,7 @@ def generate_multiple_generations():
     '''
 
     # python data visualizer
-    render_layouts(generation_costs, historic)
+    #render_layouts(generation_costs, historic)
 
 if __name__ == "__main__":
     print "Population Size: ", population_size, ", No of Generations: ", n_generations

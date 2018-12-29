@@ -61,12 +61,11 @@ for asset in assets_json['data']['assets']:
         else:
             asset_vertical = ''
 
-        asset_data[i] = Asset(asset_category, asset_subcategory, asset_vertical, asset_price, asset_dimension)
-        
-        print [asset_category, asset_subcategory, asset_vertical, asset_price, asset_dimension]
-        
-        i += 1
+        if asset_dimension['width'] <= 10 and asset_dimension['depth'] <= 10:
+            asset_data[i] = Asset(asset_category, asset_subcategory, asset_vertical, asset_price, asset_dimension)
+            print [asset_category, asset_subcategory, asset_vertical, asset_price, asset_dimension]
+            i += 1
 
 ## dump asset data to pickle file
-#with open('data/asset_list', 'wb') as fp:
-#    pickle.dump(asset_data, fp)
+with open('data/asset_list', 'wb') as fp:
+    pickle.dump(asset_data, fp)

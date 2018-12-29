@@ -34,6 +34,7 @@ def calculate_clearance_term(layout_assets):
             
             total_iou += iou
 
+    #return total_iou
     return total_iou/(len(layout_assets) * (len(layout_assets)-1))
 
 
