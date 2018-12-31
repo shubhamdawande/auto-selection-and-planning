@@ -6,12 +6,12 @@ def calculate_cost(layout, room_dim):
     layout_assets = layout.items()[0][1]
     
     cost_clearance = calculate_clearance_term(layout_assets)
-    cost_proportion = calculate_proportion_term(layout_assets, room_dim)
+    #cost_proportion = calculate_proportion_term(layout_assets, room_dim)
 
     # calculate final cost
     wt_clearance = 1
-    wt_proportion = 0
-    total_cost = wt_clearance * cost_clearance + wt_proportion * cost_proportion
+    #wt_proportion = 1.3
+    total_cost = wt_clearance * cost_clearance #+ wt_proportion * cost_proportion
 
     return total_cost
 
@@ -104,8 +104,6 @@ def calculate_overlap(asset1, asset2, padding):
             #print dx, dz, 3
 
     if dx >= 0 and dz >= 0:
-        intersection = dx * dz
+        return dx * dz
     else:
-        intersection = 0
-
-    return intersection
+        return 0
