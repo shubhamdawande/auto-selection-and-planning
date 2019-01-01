@@ -4,10 +4,11 @@ import random
 import operator
 import numpy as np
 import sys
+import pdb
 
 ## Custom imports
 from cost_function import calculate_cost, calculate_overlap
-from visualizer import render_layouts
+from visualizer import render_layouts, render_one
 from mutation_handler import mutate_design
 from globals import *
 
@@ -80,7 +81,7 @@ def evaluate_population(current_population):
         
         # layout structure: {id : asset_layouts_list}
         # asset_layouts_list: list of [asset object, position, rotation]
-        individual_layout = current_population[i] 
+        individual_layout = current_population[i]
         population_cost[individual_layout.items()[0][0]] = calculate_cost(individual_layout, room_dimensions)
 
     return population_cost
@@ -93,51 +94,57 @@ def create_child(parent1, parent2):
     global _id
     p1_asset_list = parent1.items()[0][1]
     p2_asset_list = parent2.items()[0][1]
-    #new_asset_list = []
+    
+    new_asset_list = []
+    l = p1_asset_list  #+ p2_asset_list
+    random.shuffle(l)
 
-    count = len(p1_asset_list)/2
-    p2_asset_ind = random.randint(0, len(p2_asset_list) - 1)
+    # child layout size
+    #count = len(l)/2
+    count = len(l)-1 
     
-    while count >= 0:
+    #p2_asset_ind = random.randint(0, len(p2_asset_list) - 1)
     
-        p1_asset_ind = random.randint(0, len(p1_asset_list)-1)
+    for asset in l:
+        if len(new_asset_list) >= count:
+            break
         
-        # check if parent 1 asset does not conflict with any asset from parent 2
-        flag = True
-        for asset in p2_asset_list:
-            if asset != p2_asset_list[p2_asset_ind]:
-                if calculate_overlap(p1_asset_list[p1_asset_ind], asset, 1) > 0:
+        # if empty list add directly
+        if len(new_asset_list) == 0:
+            new_asset_list.append(asset)
+        
+        else: # else check overlap is null and then add
+            flag = True
+            for a in new_asset_list:
+                if calculate_overlap(asset, a, 0) > 0:
                     flag = False
                     break
-
-        if flag:
-            p2_asset_list[p2_asset_ind] = p1_asset_list[p1_asset_ind]
-            print "swap found...."
-        count -= 1
-
-    print "\n count reset...."
-    child = {_id: p2_asset_list}
+            if flag:
+                new_asset_list.append(asset)
+    
+    child = {_id: new_asset_list}
     _id += 1
     return child
 
 
 ## Crossover: create child layouts from best parents of current generation
-def create_child_layouts(best_parent_layouts):
+def create_child_layouts(best_parent_layouts, gen_count):
 
     child_layout_list = []
     temp = np.arange(len(best_parent_layouts))
 
     for i in range(0, int(population_size * 0.3)):
 
-        #print "Children number created: ", i
         [parent1, parent2] = random.sample(temp, 2)
-        child_layout_list.append(create_child(best_parent_layouts[parent1], best_parent_layouts[parent2]))
+        cc = create_child(best_parent_layouts[parent1], best_parent_layouts[parent2])
+        #render_one(cc, room_dimensions, gen_count)
+        child_layout_list.append(cc)
 
     return child_layout_list
 
 
-## Tournament selection for current population + crossover
-def select_next_generation(current_population, population_cost):
+## Tournament selection for current population + crossover from best ones
+def select_and_crossover(current_population, population_cost, gen_count):
 
     next_best_breeders = []
     arr = np.arange(population_size)
@@ -161,20 +168,11 @@ def select_next_generation(current_population, population_cost):
         next_best_breeders.append(current_population[arr[winner_index]])
         arr = np.delete(arr, winner_index)
 
-    '''
-    # debug
-    print "\n\nPrinting 70 percent next best layouts:"
-    for l in next_best_breeders:
-        print "layout id:", l.items()[0][0]
-        for a in l.items()[0][1]:
-            print a[0]._category, a[0]._subcategory, a[0]._vertical
-    '''
-
     # create 30 percent new layouts from crossover of parents
     random.shuffle(next_best_breeders)
     print "Finding Child layouts from 70 percent best ones....."
-    child_layouts = create_child_layouts(next_best_breeders)
-    
+    child_layouts = create_child_layouts(next_best_breeders, gen_count)
+
     print "Created 30 percent child layouts....."
     g = next_best_breeders + child_layouts
     random.shuffle(g)
@@ -182,26 +180,26 @@ def select_next_generation(current_population, population_cost):
 
 
 ## Generate next generation from current population
-def next_generation(current_population):
+def create_next_generation(current_population, gen_count):
      
     # find cost of individuals in population
-    population_cost = evaluate_population(current_population)
+    current_population_cost = evaluate_population(current_population)
     print "Calculated population cost...."
 
     # 1. selection + crossover stage
-    next_breeders = select_next_generation(current_population, population_cost)
+    next_breeders = select_and_crossover(current_population, current_population_cost, gen_count)
     print "Calculated next generation...."
     
-    # 2. mutation stage....to be fixed.....
-    print "Mutating 50 percent of assets...."
-    random.shuffle(next_breeders)
-    
     if 0:
+        # 2. mutation stage....to be fixed.....
+        print "Mutating 50 percent of layouts...."
+        random.shuffle(next_breeders)
+        
         for i in range(0, int(len(next_breeders)/2)):
             layout_new = mutate_design(next_breeders[i])
             next_breeders[i] = layout_new
 
-    return [next_breeders, population_cost]
+    return [next_breeders, current_population_cost]
 
 
 ## Traverse over multiple generations
@@ -212,19 +210,26 @@ def generate_multiple_generations():
 
     # store cost for layouts in all generations
     generation_costs = []
-    
     historic.append(generate_first_population())
+    
     for i in range(0, n_generations - 1):
+        
         print "Generation: ", i
-        gen = next_generation(historic[i])
+        gen = create_next_generation(historic[i], i + 1)
+
         historic.append(gen[0])
         generation_costs.append(gen[1])
 
+    #print len(gen[0])
+    # get cost for last generation
+    p_cost = evaluate_population(gen[0])
+    generation_costs.append(p_cost)
+
     # print costs for all generations
     for g in range(n_generations-1):
-        print "\ngeneration number:  ", g
-        for _, v in generation_costs[g].items():
-            print v,",", 
+        print "\n\ngeneration number:  ", g
+        for k, v in generation_costs[g].items():
+            print k, ":", v, ",",
 
     '''
     # print design assets of all generations

@@ -34,7 +34,6 @@ def calculate_clearance_term(layout_assets):
             
             total_iou += iou
 
-    #return total_iou
     return total_iou/(len(layout_assets) * (len(layout_assets)-1))
 
 
@@ -99,8 +98,8 @@ def calculate_overlap(asset1, asset2, padding):
             dz = min(asset1[1]['z'] + asset1_width / 2, asset2[1]['z'] + asset2_depth / 2) - max(asset1[1]['z'] - asset1_width / 2, asset2[1]['z'] - asset2_depth / 2)
             #print dx, dz, 2
         elif asset1[2] == 90 or asset1[2] == 270: 
-            dx = min(asset1[1]['x'] + asset1_width/2, asset2[1]['x'] + asset2_depth/2) - max(asset1[1]['x'] - asset1_width/2, asset2[1]['x'] - asset2_depth/2)
-            dz = min(asset1[1]['z'] + asset1_depth/2, asset2[1]['z'] + asset2_width/2) - max(asset1[1]['z'] - asset1_depth/2, asset2[1]['z'] - asset2_width/2)
+            dx = min(asset1[1]['x'] + asset1_width / 2, asset2[1]['x'] + asset2_depth / 2) - max(asset1[1]['x'] - asset1_width / 2, asset2[1]['x'] - asset2_depth / 2)
+            dz = min(asset1[1]['z'] + asset1_depth / 2, asset2[1]['z'] + asset2_width / 2) - max(asset1[1]['z'] - asset1_depth / 2, asset2[1]['z'] - asset2_width / 2)
             #print dx, dz, 3
 
     if dx >= 0 and dz >= 0:

@@ -9,4 +9,4 @@ population_size = 100   # initial number of layouts
 tournament_size = int(population_size*0.3)
 
 ## flags
-visualizer_on = False
+visualizer_on = True
