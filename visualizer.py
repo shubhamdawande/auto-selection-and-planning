@@ -1,6 +1,9 @@
 import tkinter as tk
 import time
 import tkFont as tf
+import pyscreenshot as ImageGrab
+import io
+
 from globals import *
 from cost_function import calculate_cost
 
@@ -8,18 +11,23 @@ from cost_function import calculate_cost
 def render_layouts(generation_costs, historic):
 
     # tkinter parameters
-    scale = 20
+    scale = 25
     root = tk.Tk()
-    root.geometry("800x800")
+    root.geometry("510x510")
     canvas = tk.Canvas(root, bg='green', width=scale*room_dimensions['width'], height=scale*room_dimensions['depth'])
     canvas.pack()
+
+    xx=root.winfo_rootx()+40
+    zz=root.winfo_rooty()+80
+    xx1=xx+530
+    zz1=zz+540
 
     for gen_index in range(n_generations - 2, n_generations - 1):
         
         for i in range(0, population_size):
             layout = historic[gen_index][i]
             
-            if generation_costs[gen_index][layout.items()[0][0]] == 0:
+            if generation_costs[gen_index][layout.items()[0][0]][0] <= 1:
                 asset_list = layout.items()[0][1]
 
                 for asset in asset_list:
@@ -30,7 +38,6 @@ def render_layouts(generation_costs, historic):
                     print asset[2]
                     print asset[1]
                     #asset[1] = {'x' : asset[1]['x'], 'z' : room_dimensions['depth'] - asset[1]['z']}
-                    print asset[1]
 
                     if asset[2] == 0 or asset[2] == 180: 
                         canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['depth'] / 2),
@@ -51,16 +58,20 @@ def render_layouts(generation_costs, historic):
                                        text="%s\n%s $"%(asset[0]._vertical, asset[0]._price))
 
                 # show total fitness value and budget
-                canvas.create_text(scale * room_dimensions['width']/2, 10, fill="yellow",
+                cost = generation_costs[gen_index][layout.items()[0][0]]
+                canvas.create_text(scale * room_dimensions['width']/2, 15, fill="yellow",
                                    font=tf.Font(family='Helvetica', size=10),
-                                   text="%s, _id: %s, budget: %s $, cost: %s"%(i, layout.items()[0][0], budget, generation_costs[gen_index][layout.items()[0][0]]))
+                                   text="%s, _id: %s, budget: %s $, \ncost: %0.5f, %0.5f, %0.5f, %0.5f" % (i, layout.items()[0][0],
+                                   budget, cost[0], cost[1], cost[2], cost[3]))
 
                 root.update()
+                ImageGrab.grab().crop((xx, zz, xx1, zz1)).save('data/im_%s.jpg'%i)
+                time.sleep(0.5)
                 #raw_input('Press enter to continue: ')
-                time.sleep(1)
                 canvas.delete("all")
     
     root.mainloop()
+
 
 
 ## Utility rendering function
@@ -70,7 +81,7 @@ def render_one(layout, room_dimensions, gen_count):
 
     if gen_count > 0:
         
-        if cost == 0:
+        if cost[0] == 0:
 
             # tkinter parameters
             scale = 20
