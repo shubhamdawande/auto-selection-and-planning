@@ -4,7 +4,7 @@ import random
 import operator
 import numpy as np
 import sys
-import pdb
+import copy
 
 ## Custom imports
 from cost_function import calculate_cost, calculate_overlap
@@ -20,15 +20,15 @@ def generate_random_layout():
     
     current_price = 0
     asset_layouts_list = []
-    random_asset = random.choice(asset_data)
+    random_asset = copy.deepcopy(random.choice(asset_data))
     rotations_possible = [0,180,90,270]
     asset_layout_dict = {}
     global _id
 
-    while len(asset_layouts_list) < max_assets_per_room:
+    while len(asset_layouts_list) < max_initial_assets:
         
         # randomly choose asset from database
-        random_asset = random.choice(asset_data)
+        random_asset = copy.deepcopy(random.choice(asset_data))
         
         # if budget not exceeded
         if current_price + random_asset._price < budget:
@@ -112,7 +112,8 @@ def create_child(parent1, parent2):
         
         # if empty list add directly
         if len(new_asset_list) == 0:
-            new_asset_list.append(asset)
+            new_asset = copy.deepcopy(asset)
+            new_asset_list.append(new_asset)
         
         else:  # else check overlap is null and then add
             flag = True
@@ -121,7 +122,8 @@ def create_child(parent1, parent2):
                     flag = False
                     break
             if flag:
-                new_asset_list.append(asset)
+                new_asset = copy.deepcopy(asset)
+                new_asset_list.append(new_asset)
 
     child = {_id: new_asset_list}
     _id += 1
@@ -166,7 +168,8 @@ def select_and_crossover(current_population, population_cost):
                 winner_cost = cost
                 winner_index = ind
 
-        next_best_breeders.append(current_population[arr[winner_index]])
+        new_layout = copy.deepcopy(current_population[arr[winner_index]])
+        next_best_breeders.append(new_layout)
         arr = np.delete(arr, winner_index)
 
     # create 30 percent new layouts from crossover of parents
@@ -220,7 +223,6 @@ def generate_multiple_generations():
         
         print "Generation: ", i
         [gen0, gen1, g_cost] = create_next_generation(historic[i], g_cost)
-
         historic.append(gen0)
         generation_costs.append(gen1)
 
@@ -244,9 +246,15 @@ def generate_multiple_generations():
                 print a[0]._category, a[0]._subcategory, a[0]._vertical
     '''
 
+    ## dump asset data to pickle file
+    with open('data/historic', 'wb') as fp:
+        pickle.dump(historic, fp)
+    with open('data/generation_costs', 'wb') as fp:
+        pickle.dump(generation_costs, fp)
+
     # python data visualizer
     if visualizer_on:
-        render_layouts(generation_costs, historic)
+        render_layouts(generation_costs, historic, False)
 
 if __name__ == "__main__":
     

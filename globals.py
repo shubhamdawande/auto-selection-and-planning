@@ -13,13 +13,13 @@ with open('data/asset_list', 'rb') as fp:
 n_generations = 50      # no of generations to iterate over
 population_size = 400   # initial number of layouts
 tournament_size = int(population_size*0.3) # select as per population size
-max_assets_per_room = 10
+max_initial_assets = 5
 
 ## flags
-visualizer_on = True
+visualizer_on = False
 
 ## group relationship dictionary => asset_subcategory: [parent_subcategories, child_subcategories]
-grp_rel = {
+pairwise_rel = {
             'Wall':      [['dummy'], ['Display Units', 'TV Units', 'Shoe Racks', 'Tables', 'Wardrobes', 'Beds', 'Prayer Units', 'Dressers', 'Bar Units']],
             'Sofas':     [['Wall'], ['dummy']],
             'Chairs':    [['Tables', 'Bar Units', 'Dining'], ['dummy']],
@@ -36,4 +36,43 @@ grp_rel = {
             'Bar Units': [['Wall'], ['Chairs']],
             'Partitions':[['dummy'], ['dummy']]
         }
-    
+
+## Desired count of each item subcategory
+desired_qty = {
+            'Sofas':1,
+            'Chairs':1,
+            'Tables':1,
+            'Dining':1,
+            'Shoe Racks':1,
+            'TV Units':1,
+            'Drawers':1,
+            'Display Units':1,
+            'Wardrobes':1,
+            'Beds':1,
+            'Prayer Units':1,
+            'Dressers':1,
+            'Bar Units':1,
+            'Partitions':1
+        }
+
+## primary , secondary functionality
+asset_subcategory_functions = {
+            'Sofas':['Sit','Sleep'],
+            'Chairs':['Sit', 'dummy'],
+            'Tables':['Sit', 'dummy'],
+            'Dining':['Sit', 'dummy'],
+            'Shoe Racks':['Storage', 'dummy'],
+            'TV Units':['Watch', 'dummy'],
+            'Drawers':['Storage', 'dummy'],
+            'Display Units':['Display', 'dummy'],
+            'Wardrobes':['Storage', 'dummy'],
+            'Beds':['Sleep', 'dummy'],
+            'Prayer Units': ['Display', 'dummy'],
+            'Dressers':['Storage', 'dummy'],
+            'Bar Units':['Sit', 'Display'],
+            'Partitions': ['Display', 'dummy']
+}
+
+room_necessary_functions = {
+   'LivingRoom': ['Sit', 'Watch', 'Display', 'Light']
+}

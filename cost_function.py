@@ -1,6 +1,17 @@
-from globals import room_dimensions, grp_rel
+from globals import *
 from math import sqrt
 from asset import Asset
+import numpy as np
+import copy
+
+## Globals
+# Add 4 wall objects to be used as parent
+wall_obj1 = Asset('Wall', 'Wall', 'Wall', 0, {'width': room_dimensions['depth'], 'depth': 0})
+wall_obj2 = Asset('Wall', 'Wall', 'Wall', 0, {'width': room_dimensions['width'], 'depth': 0})
+[w1, w2, w3, w4] = [[wall_obj1, {'x': 0, 'z': room_dimensions['depth'] / 2}, 0],
+                        [wall_obj2, {'x': room_dimensions['width'] / 2, 'z': 0}, 270],
+                        [wall_obj1, {'x': room_dimensions['width'], 'z': room_dimensions['depth'] / 2}, 180],
+                        [wall_obj2, {'x': room_dimensions['width'] / 2, 'z': room_dimensions['depth']}, 90]]
 
 ## Cost function
 ## Based upon ergonomic, functional and visual needs defined by interior design guidelines
@@ -14,21 +25,26 @@ def calculate_cost(layout, room_dim):
     cost_clearance = calculate_clearance_term(layout_assets)
     cost_grp_relations = check_pairwise_relationship(layout_assets)
     cost_proportion = calculate_proportion_term(layout_assets, room_dim)
+    cost_functional_req = check_functional_req(layout_assets)
+
+    # weight parameters
+    wt_clearance = 1
+    wt_proportion = 1
+    wt_grp_relations = 1
+    wt_functional_req = 1
 
     # calculate final cost
-    wt_clearance = 2
-    wt_proportion = 1.2
-    wt_grp_relationship = 1
     total_cost += wt_clearance * cost_clearance
-    total_cost += wt_grp_relationship * cost_grp_relations
+    total_cost += wt_grp_relations * cost_grp_relations
     total_cost += wt_proportion * cost_proportion
+    total_cost += wt_functional_req * cost_functional_req
 
     # individual layout cost structure: [total, cost associated for each feature]
     # features: clearance, circulation, proportion, functional, group relations, alignement
-    return [total_cost, cost_clearance, cost_grp_relations, cost_proportion]
+    return [total_cost, cost_clearance, cost_grp_relations, cost_proportion, cost_functional_req]
 
 
-## Clearance constraint
+## Clearance constraint: objects in a design should have some empty space around them
 def calculate_clearance_term(layout_assets):
 
     padding = 1
@@ -48,17 +64,38 @@ def calculate_clearance_term(layout_assets):
     else:
         return 0
 
+## Consist of asset compatibility w.r.t. room and customer type
+def check_functional_req(layout_assets):
 
-## Check parent child heirarchy is followed
+    cost = check_room_requirement(layout_assets)
+    return cost
 
-# add 4 wall objects to be used as parent
-wall_obj1 = Asset('Wall', 'Wall', 'Wall', 0, {'width': room_dimensions['depth'], 'depth': 0})
-wall_obj2 = Asset('Wall', 'Wall', 'Wall', 0, {'width': room_dimensions['width'], 'depth': 0})
-[w1, w2, w3, w4] = [[wall_obj1, {'x': 0, 'z': room_dimensions['depth'] / 2}, 0],
-                        [wall_obj2, {'x': room_dimensions['width'] / 2, 'z': 0}, 270],
-                        [wall_obj1, {'x': room_dimensions['width'], 'z': room_dimensions['depth'] / 2}, 180],
-                        [wall_obj2, {'x': room_dimensions['width'] / 2, 'z': room_dimensions['depth']}, 90]]
+## Importance and desired quantity of each asset for a room as per its category
+def check_room_requirement(layout_assets):
+    
+    current_qty = copy.deepcopy(desired_qty)
+    cost1 = 0
+    cost2 = 0
 
+    for asset in layout_assets:
+        if asset != None and asset[0]._subcategory != '':
+
+            current_qty[asset[0]._subcategory] -= 1
+            imp = calculate_importance(asset)
+            cost2 += (1-imp)
+
+    # check desired qty of assets met
+    for _, v in current_qty.items():
+            cost1 += abs(v)
+    cost1 /= (2 * len(current_qty.items()))
+    
+    # check asset importance per room
+    cost2 /= (2 * len(layout_assets))
+
+    return cost1 + cost2
+
+
+## Check parent child (pairwise) heirarchy is followed
 def check_pairwise_relationship(layout_assets):
 
     layout_assets.append(w1)
@@ -82,7 +119,7 @@ def check_pairwise_relationship(layout_assets):
                 if asset2 != None:
                     
                         # if in parent
-                        if asset2[0]._subcategory in grp_rel[asset1[0]._subcategory][0]:
+                        if asset2[0]._subcategory in pairwise_rel[asset1[0]._subcategory][0]:
                             
                             # dist should be min
                             distx = asset1[1]['x'] - asset2[1]['x']
@@ -90,12 +127,12 @@ def check_pairwise_relationship(layout_assets):
 
                             # angle should be 0/180
                             if abs(asset1[2] - asset2[2]) == 90 or abs(asset1[2] - asset2[2]) == 270:
-                                dist += (distx * distx + distz * distz)*(3/2) 
+                                dist += (distx * distx + distz * distz)*(3/2)
                             else:
                                 dist += (distx * distx + distz * distz)
 
                         # if in child
-                        elif asset2[0]._subcategory in grp_rel[asset1[0]._subcategory][1]:
+                        elif asset2[0]._subcategory in pairwise_rel[asset1[0]._subcategory][1]:
 
                             # dist should be min
                             distx = asset1[1]['x'] - asset2[1]['x']
@@ -103,7 +140,7 @@ def check_pairwise_relationship(layout_assets):
 
                             # angle should be 0/180
                             if abs(asset1[2] - asset2[2]) == 90 or abs(asset1[2] - asset2[2]) == 270:
-                                dist += (distx * distx + distz * distz)*(3/2) 
+                                dist += (distx * distx + distz * distz)*(3/2)
                             else:
                                 dist += (distx * distx + distz * distz)
 
@@ -116,7 +153,8 @@ def check_pairwise_relationship(layout_assets):
 
     return cost
 
-## Area proportions constraint
+
+## Desired area occupancy requirement
 def calculate_proportion_term(layout_assets, room_dim):
     
     room_area = room_dim['width'] * room_dim['depth']
@@ -131,6 +169,18 @@ def calculate_proportion_term(layout_assets, room_dim):
 
 
 ### Utility functions
+
+def calculate_importance(asset):
+    
+    f1 = asset_subcategory_functions[asset[0]._subcategory][0]
+    f2 = asset_subcategory_functions[asset[0]._subcategory][1]
+    if f1 in room_necessary_functions[room_type]:
+        return 1
+    elif f2 in room_necessary_functions[room_type]:
+        return 0.75
+    else:
+        return 0.1
+
 
 ## intersection over union
 def calculate_iou(asset1, asset2, padding):

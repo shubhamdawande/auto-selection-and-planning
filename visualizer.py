@@ -8,7 +8,14 @@ from globals import *
 from cost_function import calculate_cost
 
 ## View final generated layouts on 2d canvas using tkinter gui
-def render_layouts(generation_costs, historic):
+def render_layouts(generation_costs, historic, load):
+
+    if load:
+        ## Load assets and generation_cost data
+        with open('data/historic', 'rb') as fp:
+            historic = pickle.load(fp)
+        with open('data/generation_costs', 'rb') as fp:
+            generation_costs = pickle.load(fp)
 
     # tkinter parameters
     scale = 25
@@ -27,7 +34,7 @@ def render_layouts(generation_costs, historic):
         for i in range(0, population_size):
             layout = historic[gen_index][i]
             
-            if generation_costs[gen_index][layout.items()[0][0]][0] <= 1:
+            if generation_costs[gen_index][layout.items()[0][0]][0] <= 0.1:
                 asset_list = layout.items()[0][1]
 
                 for asset in asset_list:
@@ -37,7 +44,6 @@ def render_layouts(generation_costs, historic):
                     print asset[0]._dimension
                     print asset[2]
                     print asset[1]
-                    #asset[1] = {'x' : asset[1]['x'], 'z' : room_dimensions['depth'] - asset[1]['z']}
 
                     if asset[2] == 0 or asset[2] == 180: 
                         canvas.create_rectangle(scale*(asset[1]['x'] - asset[0]._dimension['depth'] / 2),
@@ -61,8 +67,8 @@ def render_layouts(generation_costs, historic):
                 cost = generation_costs[gen_index][layout.items()[0][0]]
                 canvas.create_text(scale * room_dimensions['width']/2, 15, fill="yellow",
                                    font=tf.Font(family='Helvetica', size=10),
-                                   text="%s, _id: %s, budget: %s $, \ncost: %0.5f, %0.5f, %0.5f, %0.5f" % (i, layout.items()[0][0],
-                                   budget, cost[0], cost[1], cost[2], cost[3]))
+                                   text="%s, _id: %s, budget: %s $, \ncost: %0.5f, %0.5f, %0.5f, %0.5f, %0.5f" % (i, layout.items()[0][0],
+                                   budget, cost[0], cost[1], cost[2], cost[3], cost[4]))
 
                 root.update()
                 ImageGrab.grab().crop((xx, zz, xx1, zz1)).save('data/im_%s.jpg'%i)
@@ -139,3 +145,6 @@ def render_one(layout, room_dimensions, gen_count):
             return
     else:
         return
+
+if __name__ == '__main__':
+    render_layouts(0,0,True)
